@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "lib": ["ESNext"],
+    "baseUrl": ".",
+    // Only the GIR namespaces a plain GJS process may use. St, Clutter and the
+    // gnome-shell resource:// modules are deliberately absent: this program runs
+    // outside gnome-shell, so importing them must fail to typecheck.
+    "paths": {
+      "gi://GLib": ["node_modules/@girs/glib-2.0/glib-2.0-ambient"],
+      "gi://Gio": ["node_modules/@girs/gio-2.0/gio-2.0-ambient"]
+    }
+  },
+  "include": ["src/**/*", "tests/**/*", "scripts/**/*"]
+}
