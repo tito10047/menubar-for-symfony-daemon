@@ -120,7 +120,10 @@ Because the bus activates this process, it does **not** inherit your shell's
 installation is somewhere else, point the extension's `symfony-path` setting at it:
 
 ```bash
-gsettings set org.gnome.shell.extensions.symfony-menubar symfony-path /opt/symfony/bin/symfony
+# The extension's schema is compiled into its own directory, not the system one
+SCHEMA_DIR=~/.local/share/gnome-shell/extensions/menubar-for-symfony@tito10047.github.com/schemas
+gsettings --schemadir "$SCHEMA_DIR" \
+    set org.gnome.shell.extensions.symfony-menubar symfony-path /opt/symfony/bin/symfony
 ```
 
 ## Security notes
