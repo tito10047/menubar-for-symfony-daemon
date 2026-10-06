@@ -185,7 +185,15 @@ wait "$DAEMON_PID" 2>/dev/null
 
 # --- service file installer ----------------------------------------------
 SERVICE_FILE="$XDG_DATA_HOME/dbus-1/services/$BUS_NAME.service"
-gjs -m "$DAEMON" --install-service >/dev/null 2>&1
+rm -f "$SERVICE_FILE"
+
+# dbus-daemon reads its activation directories once at startup, so a service file
+# written into a running session is ignored until the next login unless the bus is
+# asked to rescan. --install-service does that; this is the regression test.
+assert_contains "the bus does not know the name before installing" \
+    "$(call ListServers)" "ServiceUnknown"
+
+INSTALL_OUTPUT="$(gjs -m "$DAEMON" --install-service 2>&1)"
 if [ -f "$SERVICE_FILE" ]; then
     pass "--install-service writes the activation file"
     assert_contains "activation file names the bus" "$(cat "$SERVICE_FILE")" "Name=$BUS_NAME"
@@ -193,6 +201,16 @@ if [ -f "$SERVICE_FILE" ]; then
 else
     fail "--install-service writes the activation file" "$SERVICE_FILE is missing"
 fi
+
+assert_contains "--install-service tells the running bus to rescan" "$INSTALL_OUTPUT" "picked it up"
+
+# The decisive assertion: activation now works without restarting the session.
+ACTIVATED="$(property ApiVersion)"
+assert_equals "the name is activatable straight after installing" "$ACTIVATED" "(<uint32 1>,)"
+
+# Leave no daemon behind for the next assertions.
+gdbus call --session --dest "$BUS_NAME" --object-path "$OBJECT_PATH" \
+    --method org.freedesktop.DBus.Peer.Ping >/dev/null 2>&1 || true
 
 gjs -m "$DAEMON" --uninstall-service >/dev/null 2>&1
 if [ -f "$SERVICE_FILE" ]; then

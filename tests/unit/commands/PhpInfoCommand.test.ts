@@ -125,3 +125,38 @@ describe('PhpInfoCommand', () => {
         expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('php:info'), failure);
     });
 });
+
+describe('PhpInfoCommand against quoted --ini output', () => {
+    // PHP 8.5 on Fedora quotes the paths it reports. Keeping the quotes made the
+    // menu show `"/etc/php.ini"` and any consumer of the path open the wrong file.
+    const QUOTED_INI = [
+        'Configuration File (php.ini) Path: "/etc"',
+        'Loaded Configuration File:         "/etc/php.ini"',
+        'Scan for additional .ini files in: "/etc/php.d"',
+        'Additional .ini files parsed:      /etc/php.d/10-opcache.ini,',
+    ].join('\n');
+
+    let runner: jest.Mocked<ProcessRunnerInterface>;
+
+    beforeEach(() => {
+        runner = { run: jest.fn(), runBinary: jest.fn() };
+    });
+
+    it('strips the quotes around the loaded ini path', async () => {
+        runner.runBinary.mockResolvedValueOnce(QUOTED_INI).mockResolvedValueOnce('');
+
+        const result = await new PhpInfoCommand(runner).execute(['/usr/bin/php']);
+
+        expect(result.phpIniPath).toBe('/etc/php.ini');
+    });
+
+    it('strips the quotes when falling back to the configuration path', async () => {
+        runner.runBinary
+            .mockResolvedValueOnce('Configuration File (php.ini) Path: "/etc"\nLoaded Configuration File: (none)')
+            .mockResolvedValueOnce('');
+
+        const result = await new PhpInfoCommand(runner).execute(['/usr/bin/php']);
+
+        expect(result.phpIniPath).toBe('/etc');
+    });
+});

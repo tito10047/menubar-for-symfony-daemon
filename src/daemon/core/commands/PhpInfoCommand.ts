@@ -69,15 +69,29 @@ export class PhpInfoCommand implements SymfonyCommandInterface<PhpInfo> {
 
     private parseIniPath(output: string): string {
         const loadedMatch = output.match(/Loaded Configuration File:\s+(.+)/);
-        if (loadedMatch && loadedMatch[1].trim() !== '(none)') {
-            return loadedMatch[1].trim();
+        if (loadedMatch) {
+            const loaded = unquote(loadedMatch[1]);
+            if (loaded !== '(none)') {
+                return loaded;
+            }
         }
 
         const pathMatch = output.match(/Configuration File \(php\.ini\) Path:\s+(.+)/);
         if (pathMatch) {
-            return pathMatch[1].trim();
+            return unquote(pathMatch[1]);
         }
 
         return '';
     }
+}
+
+/**
+ * Removes the surrounding double quotes PHP puts around the paths it reports.
+ * PHP 8.5 quotes them; earlier versions do not, so both shapes have to work.
+ */
+function unquote(value: string): string {
+    const trimmed = value.trim();
+    return trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length >= 2
+        ? trimmed.slice(1, -1)
+        : trimmed;
 }

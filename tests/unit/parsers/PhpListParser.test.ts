@@ -66,3 +66,42 @@ describe('PhpListParser', () => {
         expect(parser.parse('')).toEqual([]);
     });
 });
+
+describe('PhpListParser with real Symfony CLI 5.20 output', () => {
+    // Captured verbatim from `symfony local:php:list --no-ansi`. The trailing
+    // prose is the point: it mentions version numbers, and an earlier
+    // implementation scanned it with a regex fallback even though the table had
+    // already been parsed, inventing a version with no binary path.
+    const REAL_OUTPUT = [
+        '+---------+--------------------------+---------+--------------+-------------+---------+---------+',
+        '| Version | Directory                | PHP CLI | PHP FPM      | PHP CGI     | Server  | System  |',
+        '+---------+--------------------------+---------+--------------+-------------+---------+---------+',
+        '| 8.3.35  | /opt/remi/php83/root/usr | bin/php | sbin/php-fpm | bin/php-cgi | PHP FPM |         |',
+        '| 8.4.26  | /opt/remi/php84/root/usr | bin/php | sbin/php-fpm | bin/php-cgi | PHP FPM |         |',
+        '| 8.5.11  | /usr                     | bin/php | bin/php-fpm  | bin/php-cgi | PHP FPM | *       |',
+        '+---------+--------------------------+---------+--------------+-------------+---------+---------+',
+        '',
+        'The current PHP version is selected from default version in $PATH',
+        '',
+        'To control the version used in a directory, create a .php-version file that contains the version number (e.g. 8.5 or 8.5.10),',
+        'or define config.platform.php inside composer.json.',
+        'If you\'re using Platform.sh or Upsun, the version can also be specified in their configuration files.',
+        'To select a specific PHP installation, set SYMFONY_CLI_PHP_BINARY_PATH to its absolute PHP CLI path.',
+    ].join('\n');
+
+    it('reports exactly the installed versions, ignoring the trailing prose', () => {
+        const versions = new PhpListParser().parse(REAL_OUTPUT);
+
+        expect(versions).toEqual([
+            { version: '8.3.35', path: '/opt/remi/php83/root/usr/bin/php', isDefault: false },
+            { version: '8.4.26', path: '/opt/remi/php84/root/usr/bin/php', isDefault: false },
+            { version: '8.5.11', path: '/usr/bin/php', isDefault: true },
+        ]);
+    });
+
+    it('never reports a version without a binary path', () => {
+        for (const version of new PhpListParser().parse(REAL_OUTPUT)) {
+            expect(version.path).not.toBe('');
+        }
+    });
+});

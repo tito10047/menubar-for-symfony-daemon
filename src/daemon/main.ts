@@ -121,7 +121,48 @@ function installServiceFile(): number {
 
     print(`Registered ${BUS_NAME} for D-Bus activation:`);
     print(`  ${path}`);
+
+    reloadBusConfig();
     return 0;
+}
+
+/**
+ * Asks the session bus to rescan its service directories.
+ *
+ * Without this the file above is ignored until the next login: dbus-daemon reads
+ * the activation directories once at startup, so a freshly installed service is
+ * reported as `ServiceUnknown: The name is not activatable`. Doing it here rather
+ * than in the shell installer means every installation path benefits, including a
+ * manual `--install-service`.
+ */
+function reloadBusConfig(): void {
+    let connection: Gio.DBusConnection;
+    try {
+        connection = Gio.bus_get_sync(Gio.BusType.SESSION, null);
+    } catch (cause) {
+        // Installing without a session bus is legitimate — a provisioning script,
+        // a container, a tty. The service file is in place for the next login.
+        print(`  (no session bus available, so it becomes active on next login: ${formatError(cause)})`);
+        return;
+    }
+
+    try {
+        connection.call_sync(
+            'org.freedesktop.DBus',
+            '/org/freedesktop/DBus',
+            'org.freedesktop.DBus',
+            'ReloadConfig',
+            null,
+            null,
+            Gio.DBusCallFlags.NONE,
+            -1,
+            null,
+        );
+        print('  the running session bus has picked it up, no logout needed');
+    } catch (cause) {
+        printerr(`  could not ask the session bus to reload: ${formatError(cause)}`);
+        printerr('  the service becomes active on next login');
+    }
 }
 
 function uninstallServiceFile(): number {
