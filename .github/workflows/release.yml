@@ -34,6 +34,13 @@ jobs:
             - name: Install GJS and dbus
               run: sudo apt-get update && sudo apt-get install -y gjs dbus
 
+            # The end-to-end test drives the real CLI; without it the daemon
+            # answers CliNotFound and two thirds of the suite fails.
+            - name: Install the Symfony CLI
+              run: |
+                  curl -sS https://get.symfony.com/cli/installer | bash
+                  echo "$HOME/.symfony5/bin" >> "$GITHUB_PATH"
+
             - name: D-Bus end-to-end test
               run: npm run test:dbus
 
