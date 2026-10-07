@@ -1,13 +1,13 @@
 import GLib from 'gi://GLib';
 import { ActionsFileSource } from './CustomActionsRepository.js';
 
-export const CONFIG_DIRECTORY_NAME = 'symfony-menubar';
+export const CONFIG_DIRECTORY_NAME = 'menubar-for-symfony';
 export const ACTIONS_FILE_NAME = 'actions.json';
 
 /**
  * Reads `actions.json` from the user's config directory.
  *
- * The file lives in `~/.config/symfony-menubar/` rather than inside the
+ * The file lives in `~/.config/menubar-for-symfony/` rather than inside the
  * extension directory, which GNOME replaces wholesale on every extension update.
  */
 export class GLibActionsFileSource implements ActionsFileSource {

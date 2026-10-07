@@ -1,11 +1,11 @@
-# symfony-menubar-daemon
+# menubar-for-symfony-daemon
 
 > Helper service for the [Menubar for Symfony](https://github.com/tito10047/menubar-for-symfony)
 > GNOME Shell extension.
 
 This program runs the [Symfony CLI](https://symfony.com/download) on the
 extension's behalf and publishes the results on the **session** D-Bus as
-`com.github.tito10047.SymfonyMenubar`.
+`com.github.tito10047.MenubarForSymfony`.
 
 ## Why it exists
 
@@ -39,8 +39,8 @@ Debian/Ubuntu, and on Fedora it comes from the `gjs` package GNOME Shell require
 ## Installation
 
 ```bash
-tar -xzf symfony-menubar-daemon-1.3.0.tar.gz
-cd symfony-menubar-daemon-1.3.0
+tar -xzf menubar-for-symfony-daemon-1.3.0.tar.gz
+cd menubar-for-symfony-daemon-1.3.0
 ./install.sh
 ```
 
@@ -48,17 +48,17 @@ Everything lands under your home directory:
 
 | Path | Purpose |
 |---|---|
-| `~/.local/share/symfony-menubar-daemon/symfony-menubar-daemon.js` | the helper itself |
-| `~/.local/bin/symfony-menubar-daemon` | launcher, for running it by hand |
-| `~/.local/share/dbus-1/services/com.github.tito10047.SymfonyMenubar.service` | lets D-Bus start it on demand |
+| `~/.local/share/menubar-for-symfony-daemon/menubar-for-symfony-daemon.js` | the helper itself |
+| `~/.local/bin/menubar-for-symfony-daemon` | launcher, for running it by hand |
+| `~/.local/share/dbus-1/services/com.github.tito10047.MenubarForSymfony.service` | lets D-Bus start it on demand |
 
 Remove it again with `./uninstall.sh`. Your `actions.json` is left alone.
 
 ### From source
 
 ```bash
-git clone https://github.com/tito10047/symfony-menubar-daemon
-cd symfony-menubar-daemon
+git clone https://github.com/tito10047/menubar-for-symfony-daemon
+cd menubar-for-symfony-daemon
 npm install
 npm run build
 ./install.sh
@@ -67,7 +67,7 @@ npm run build
 ## Command line
 
 ```
-symfony-menubar-daemon [OPTION...]
+menubar-for-symfony-daemon [OPTION...]
 
   --install-service     Register the service for D-Bus activation, then exit
   --uninstall-service   Remove that registration, then exit
@@ -84,9 +84,9 @@ Running it by hand is only useful for debugging — normally D-Bus starts it.
 The interface is introspectable, so you do not need the extension to try it:
 
 ```bash
-D="--session --dest com.github.tito10047.SymfonyMenubar \
-   --object-path /com/github/tito10047/SymfonyMenubar"
-I=com.github.tito10047.SymfonyMenubar1
+D="--session --dest com.github.tito10047.MenubarForSymfony \
+   --object-path /com/github/tito10047/MenubarForSymfony"
+I=com.github.tito10047.MenubarForSymfony1
 
 gdbus introspect $D
 gdbus call $D --method $I.ListServers
@@ -109,7 +109,7 @@ The helper reads no settings of its own. The extension owns them in GSettings an
 forwards the relevant ones over `Subscribe` / `UpdateOptions`: polling interval,
 debug logging, terminal command and an optional explicit Symfony CLI path.
 
-The one file it does read is `~/.config/symfony-menubar/actions.json`, described in
+The one file it does read is `~/.config/menubar-for-symfony/actions.json`, described in
 the [extension's README](https://github.com/tito10047/menubar-for-symfony#custom-actions).
 
 ### Finding the Symfony CLI
@@ -123,7 +123,7 @@ installation is somewhere else, point the extension's `symfony-path` setting at 
 # The extension's schema is compiled into its own directory, not the system one
 SCHEMA_DIR=~/.local/share/gnome-shell/extensions/menubar-for-symfony@tito10047.github.com/schemas
 gsettings --schemadir "$SCHEMA_DIR" \
-    set org.gnome.shell.extensions.symfony-menubar symfony-path /opt/symfony/bin/symfony
+    set org.gnome.shell.extensions.menubar-for-symfony symfony-path /opt/symfony/bin/symfony
 ```
 
 ## Security notes
@@ -146,7 +146,7 @@ npm test                 # unit tests, fully mocked
 npm run test:integration # against the real Symfony CLI (RUN_INTEGRATION=1)
 npm run test:dbus        # end-to-end on a private session bus via dbus-run-session
 npm run check            # all of the above, in order
-npm run build            # -> dist/symfony-menubar-daemon.js
+npm run build            # -> dist/menubar-for-symfony-daemon.js
 npm run watch            # rebuild on change
 ```
 

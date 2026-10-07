@@ -5,7 +5,7 @@ import {
 import { LoggerInterface } from '../../../src/shared/interfaces/LoggerInterface';
 
 describe('CustomActionsRepository', () => {
-    const PATH = '/home/user/.config/symfony-menubar/actions.json';
+    const PATH = '/home/user/.config/menubar-for-symfony/actions.json';
 
     let logger: jest.Mocked<LoggerInterface>;
 

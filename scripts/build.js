@@ -1,7 +1,7 @@
 /**
  * Bundles the daemon into a single readable file with esbuild.
  *
- *   dist/symfony-menubar-daemon.js
+ *   dist/menubar-for-symfony-daemon.js
  *
  * One file is deliberate. This program is installed by hand from a tarball, so
  * the person installing it should be able to read all of it before running it —
@@ -22,7 +22,7 @@ const RUNTIME_MODULES = ['gi://*', 'system', 'gettext', 'cairo', 'console'];
 
 const options = {
     entryPoints: ['src/daemon/main.ts'],
-    outfile: 'dist/symfony-menubar-daemon.js',
+    outfile: 'dist/menubar-for-symfony-daemon.js',
     bundle: true,
     format: 'esm',
     platform: 'neutral',

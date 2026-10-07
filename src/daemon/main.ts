@@ -23,7 +23,7 @@ declare const __DAEMON_VERSION__: string;
 
 const SERVICE_FILE_NAME = `${BUS_NAME}.service`;
 
-const USAGE = `Usage: symfony-menubar-daemon [OPTION...]
+const USAGE = `Usage: menubar-for-symfony-daemon [OPTION...]
 
 Helper service for the "Menubar for Symfony" GNOME Shell extension. It runs the
 Symfony CLI on the extension's behalf and exposes the results on the session bus
@@ -187,7 +187,7 @@ function uninstallServiceFile(): number {
 function runDaemon(args: Arguments): number {
     const logger = new ConsoleLogger(new JournalPrinter());
     logger.setDebugLogging(args.verbose);
-    logger.info(`Starting symfony-menubar-daemon ${__DAEMON_VERSION__}`);
+    logger.info(`Starting menubar-for-symfony-daemon ${__DAEMON_VERSION__}`);
 
     const environment = new SymfonyEnvironment(logger);
     environment.locate('');
@@ -236,7 +236,7 @@ function runDaemon(args: Arguments): number {
 
     service.shutdown();
     Gio.bus_unown_name(ownerId);
-    logger.info('symfony-menubar-daemon stopped');
+    logger.info('menubar-for-symfony-daemon stopped');
     return 0;
 }
 

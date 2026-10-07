@@ -11,13 +11,13 @@
 
 set -euo pipefail
 
-BUNDLE_NAME="symfony-menubar-daemon.js"
+BUNDLE_NAME="menubar-for-symfony-daemon.js"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/symfony-menubar-daemon"
+DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/menubar-for-symfony-daemon"
 BIN_DIR="$HOME/.local/bin"
-CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/symfony-menubar"
-WRAPPER="$BIN_DIR/symfony-menubar-daemon"
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/menubar-for-symfony"
+WRAPPER="$BIN_DIR/menubar-for-symfony-daemon"
 
 # A release tarball ships the bundle next to this script; a git checkout has it
 # under dist/ after a build.
@@ -75,11 +75,11 @@ echo "Done. Custom actions belong in $CONFIG_DIR/actions.json"
 case ":$PATH:" in
     *":$BIN_DIR:"*) ;;
     *) echo "Note: $BIN_DIR is not on your PATH. D-Bus activation works regardless;"
-       echo "      add it if you want to run 'symfony-menubar-daemon' by hand." ;;
+       echo "      add it if you want to run 'menubar-for-symfony-daemon' by hand." ;;
 esac
 
 if gdbus call --session --dest org.freedesktop.DBus --object-path /org/freedesktop/DBus \
-        --method org.freedesktop.DBus.GetNameOwner com.github.tito10047.SymfonyMenubar >/dev/null 2>&1; then
-    echo "Note: an older helper is still running. Run 'symfony-menubar-daemon --replace'"
+        --method org.freedesktop.DBus.GetNameOwner com.github.tito10047.MenubarForSymfony >/dev/null 2>&1; then
+    echo "Note: an older helper is still running. Run 'menubar-for-symfony-daemon --replace'"
     echo "      or toggle the extension off and on to pick up this version."
 fi

@@ -5,9 +5,9 @@
 
 set -euo pipefail
 
-DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/symfony-menubar-daemon"
-WRAPPER="$HOME/.local/bin/symfony-menubar-daemon"
-CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/symfony-menubar"
+DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/menubar-for-symfony-daemon"
+WRAPPER="$HOME/.local/bin/menubar-for-symfony-daemon"
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/menubar-for-symfony"
 
 if [ -x "$WRAPPER" ]; then
     "$WRAPPER" --uninstall-service

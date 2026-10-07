@@ -11,10 +11,10 @@
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-DAEMON="$ROOT/dist/symfony-menubar-daemon.js"
-BUS_NAME="com.github.tito10047.SymfonyMenubar"
-OBJECT_PATH="/com/github/tito10047/SymfonyMenubar"
-IFACE="com.github.tito10047.SymfonyMenubar1"
+DAEMON="$ROOT/dist/menubar-for-symfony-daemon.js"
+BUS_NAME="com.github.tito10047.MenubarForSymfony"
+OBJECT_PATH="/com/github/tito10047/MenubarForSymfony"
+IFACE="com.github.tito10047.MenubarForSymfony1"
 
 PASSED=0
 FAILED=0
@@ -67,10 +67,10 @@ if [ "${1:-}" != "--inner" ]; then
     WORK_DIR="$(mktemp -d)"
     trap 'rm -rf "$WORK_DIR"' EXIT
 
-    mkdir -p "$WORK_DIR/config/symfony-menubar" "$WORK_DIR/data" "$WORK_DIR/project"
+    mkdir -p "$WORK_DIR/config/menubar-for-symfony" "$WORK_DIR/data" "$WORK_DIR/project"
 
     # Two usable actions plus three that must be rejected with a logged reason.
-    cat > "$WORK_DIR/config/symfony-menubar/actions.json" <<'JSON'
+    cat > "$WORK_DIR/config/menubar-for-symfony/actions.json" <<'JSON'
 [
   { "name": "Editor", "command": "true {path}", "icon": "document-open-symbolic", "inline": true },
   { "name": "Deploy", "command": "true deploy" },

@@ -1,6 +1,6 @@
 import { GnomeLogger } from '../../shared/logging/ConsoleLogger.js';
 
-const PREFIX = '[SymfonyMenubar]';
+const PREFIX = '[MenubarForSymfony]';
 
 /**
  * Logging sink for the daemon.

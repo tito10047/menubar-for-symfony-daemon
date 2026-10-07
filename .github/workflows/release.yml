@@ -39,11 +39,11 @@ jobs:
               run: |
                   set -euo pipefail
                   VERSION=$(node -p "require('./package.json').version")
-                  NAME="symfony-menubar-daemon-${VERSION}"
+                  NAME="menubar-for-symfony-daemon-${VERSION}"
                   DIR="$RUNNER_TEMP/$NAME"
 
                   mkdir -p "$DIR"
-                  cp dist/symfony-menubar-daemon.js "$DIR/"
+                  cp dist/menubar-for-symfony-daemon.js "$DIR/"
                   cp install.sh uninstall.sh README.md LICENSE "$DIR/"
                   tar -czf "$GITHUB_WORKSPACE/${NAME}.tar.gz" -C "$RUNNER_TEMP" "$NAME"
 
