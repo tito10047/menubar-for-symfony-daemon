@@ -27,6 +27,10 @@ export class ProxyStatusParser {
         }
 
         const proxies: { domain: string; directory: string }[] = [];
+        // A project with several domains spills them over rows that carry no
+        // directory of their own; those belong to the last directory seen.
+        let lastDirectory = '';
+
         for (const line of lines) {
             const trimmed = line.trim();
             if (!trimmed || trimmed.startsWith('+') || trimmed.startsWith('-') ||
@@ -35,17 +39,25 @@ export class ProxyStatusParser {
                 continue;
             }
 
+            const pathMatch = trimmed.match(PATH_REGEX);
+            // `//127.0.0.1:7080` out of the "Listening on" header looks like a path.
+            if (pathMatch && !pathMatch[1].startsWith('//')) {
+                lastDirectory = pathMatch[1];
+            }
+
             const domainMatch = trimmed.match(DOMAIN_REGEX);
             if (domainMatch) {
                 const domain = domainMatch[1];
-                const pathMatch = trimmed.match(PATH_REGEX);
-                const directory = pathMatch ? pathMatch[1] : '';
 
                 if (!proxies.find(p => p.domain === domain)) {
-                    proxies.push({ domain, directory });
+                    proxies.push({ domain, directory: lastDirectory });
                 }
             }
         }
+
+        // Stable order: the CLI shuffles the domains of a project, and
+        // `StateWatcher` would read a reshuffled list as a state change.
+        proxies.sort((a, b) => a.domain.localeCompare(b.domain));
 
         return { isRunning, proxies };
     }

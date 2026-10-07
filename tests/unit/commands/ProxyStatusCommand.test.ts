@@ -45,14 +45,15 @@ The local proxy is running
         expect(result.isRunning).toBe(true);
         expect(result.proxies).toHaveLength(2);
         
+        // Ordered by domain, not as the CLI happened to print it.
         expect(result.proxies[0]).toEqual({
-            domain: "my-project.wip",
-            directory: "/home/user/projects/my-project"
+            domain: "another.wip",
+            directory: "/home/user/projects/another"
         });
 
         expect(result.proxies[1]).toEqual({
-            domain: "another.wip",
-            directory: "/home/user/projects/another"
+            domain: "my-project.wip",
+            directory: "/home/user/projects/my-project"
         });
     });
 

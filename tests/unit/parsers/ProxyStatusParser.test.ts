@@ -39,6 +39,51 @@ Proxy server is not running.
         expect(parser.parse('')).toEqual({ isRunning: false, proxies: [] });
     });
 
+    it('should report the same list no matter how the CLI ordered the domains', () => {
+        // Same reason as in ServerListParser: the CLI shuffles the domains of a
+        // project, and a reshuffled snapshot must not look like a state change.
+        const oneOrder = `
+Listening on https://127.0.0.1:7080
++------------------+--------------------+
+| Directory        | Domains            |
++------------------+--------------------+
+| /home/user/app   | ts.app.wip         |
+|                  | app.wip            |
+| /home/user/other | other.wip          |
++------------------+--------------------+
+`;
+        const otherOrder = `
+Listening on https://127.0.0.1:7080
++------------------+--------------------+
+| Directory        | Domains            |
++------------------+--------------------+
+| /home/user/other | other.wip          |
+| /home/user/app   | app.wip            |
+|                  | ts.app.wip         |
++------------------+--------------------+
+`;
+
+        expect(parser.parse(oneOrder).proxies).toEqual(parser.parse(otherOrder).proxies);
+    });
+
+    it('should attach a continuation domain to the directory above it', () => {
+        const output = `
+Listening on https://127.0.0.1:7080
++------------------+--------------------+
+| Directory        | Domains            |
++------------------+--------------------+
+| /home/user/app   | app.wip            |
+|                  | ts.app.wip         |
++------------------+--------------------+
+`;
+        const result = parser.parse(output);
+
+        expect(result.proxies).toEqual([
+            { domain: 'app.wip', directory: '/home/user/app' },
+            { domain: 'ts.app.wip', directory: '/home/user/app' },
+        ]);
+    });
+
     it('should deduplicate domains', () => {
         const output = `
 Listening on https://127.0.0.1:7080
